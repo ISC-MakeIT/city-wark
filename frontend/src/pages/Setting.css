@@ -1,26 +1,25 @@
 #settings {
     padding: 20px;
   }
-  
+
   .setting-section {
     margin: 15px 0;
   }
-  
+
   label {
     font-size: 16px;
   }
-  
+
   select,
   input {
     margin-left: 10px;
     padding: 5px;
   }
-  
+
   .preview {
     margin-top: 20px;
   }
-  
+
   span {
     margin-left: 10px;
   }
-  

@@ -17,58 +17,15 @@
   padding:  10px 10px;
   background-color: #f4f4f4;
   border-bottom: 1px solid #ddd;
-  width: 100%;
+
 }
 
-/* ヘッダー */
-.app-header {
-  justify-content: center;
-  height: 100px;
-  background-color: #007BFF;
-  color: white;
-  padding: 0 10px;
-  text-align: center;
-  width: 100%;
-}
 /* メインコンテンツ */
 .app-main {
   flex: 1;
   padding: 20px;
   height: 100%;
   z-index: 1000;
-}
-
-/* ナビゲーション,フッター */
-/* フッター */
-.app-footer {
-  width: 100%;
-  height: 50px;
-  text-align: center;
-  padding: 10px;
-  background-color: #f4f4f4;
-  border-top: 1px solid #ddd;
-}
-
-.app-footer ul {
-  list-style: none;
-  display: flex;
-  justify-content: center;
-  background-color: #f4f4f4;
-  padding: 10px;
-  margin: 0;
-}
-
-.app-footer ul li {
-  margin: 0 15px;
-}
-
-.app-footer ul li a {
-  text-decoration: none;
-  color: #007BFF;
-}
-
-.app-footer ul li a:hover {
-  text-decoration: underline;
 }
 
 
