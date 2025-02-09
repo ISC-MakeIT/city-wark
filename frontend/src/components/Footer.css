@@ -26,9 +26,15 @@
 
 .app-footer ul li a {
     text-decoration: none;
-    color: #007BFF;
+    color: black;
 }
 
 .app-footer ul li a:hover {
     text-decoration: underline;
+}
+
+/* アクティブなリンクのスタイルを追加 */
+.app-footer ul li a.active {
+    color: #6aa241;
+    pointer-events: none; /* リンクをクリック不可にする */
 }

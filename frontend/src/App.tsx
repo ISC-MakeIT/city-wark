@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 
 // ページコンポーネントのインポート
 import Home from "./pages/Home";
@@ -10,7 +10,7 @@ import { Header } from "./components/Header";
 import Footer from "./components/Footer";
 import ProfileSetting from "./components/ProfileSetting";
 
-// 📌 ここでコンテキストを正しくインポート！
+// 📌 ここでコンテキストを正���くインポート！
 import { FontSizeProvider } from "./context/FontSizeContext";
 
 import "./App.css"; // CSS ファイルをインポート
@@ -26,6 +26,7 @@ const App: React.FC = () => {
             {/* メインコンテンツ */}
             <main className="app-main">
               <Routes>
+                <Route path="/" element={<Navigate to="/home" />} />
                 <Route path="/home" element={<Home />} />
                 <Route path="/todo" element={<Todo />} />
                 <Route path="/setting" element={<Setting />} />
