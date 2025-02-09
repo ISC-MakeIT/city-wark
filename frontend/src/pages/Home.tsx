@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { useFontSize } from "../context/FontSizeContext"; // フォントサイズを取得
-import "./Home.css"; // CSSのインポート
+import { useFontSize } from "../context/FontSizeContext";
+import "./Home.css";
 
 const Home: React.FC = () => {
-    const { fontSize, setFontSize } = useFontSize(); // フォントサイズを取得
+    const { fontSize, setFontSize } = useFontSize();
     const [tasks, setTasks] = useState<{ id: number, text: string, completed: boolean, fromTargetTask: boolean }[]>([]);
     const [newTask, setNewTask] = useState<string>('');
     const [showCompleted, setShowCompleted] = useState<boolean>(false);
     const [randomTask, setRandomTask] = useState<string>('');
     const [isTargetTaskAdded, setIsTargetTaskAdded] = useState<boolean>(false);
     const [isTargetTaskCompleted, setIsTargetTaskCompleted] = useState<boolean>(false);
+    const [showSettings, setShowSettings] = useState<boolean>(false); // 設定画面の表示状態
 
     const targetTaskCompletedCount = tasks.filter(task => task.completed && task.fromTargetTask).length;
 
@@ -62,6 +63,36 @@ const Home: React.FC = () => {
 
     return (
         <div className="home" style={{ fontSize: `${fontSize}px` }}>
+            {/* 設定ボタン */}
+            <div className="settings-button" onClick={() => setShowSettings(!showSettings)}>
+                &#9776;
+            </div>
+
+            {/* 設定画面の枠 */}
+            {showSettings && (
+                <div className="settings-frame">
+                    <div className="settings-content">
+                        <h2>設定画面</h2>
+                        <div className="setting-section">
+                            <label>文字の大きさ：</label>
+                            <input
+                                type="range"
+                                id="font-size"
+                                min={12}
+                                max={36}
+                                value={fontSize}
+                                onChange={(e) => setFontSize(Number(e.target.value))}
+                                style={{ fontSize: "16px" }}
+                            />
+                            <span style={{ marginLeft: "10px", fontSize: "16px" }}>{fontSize}px</span>
+                        </div>
+                        <button onClick={() => setShowSettings(false)} className="close-button">
+                            閉じる
+                        </button>
+                    </div>
+                </div>
+            )}
+
             <div className="targetTask">
                 <div className={"todayTargetTask"}>今日の目標タスク</div>
                 <div className="task-container">
@@ -153,26 +184,6 @@ const Home: React.FC = () => {
             <div className="task-stats">
                 <h2>{point}</h2>
                 <p>{targetTaskCompletedCount}</p>
-            </div>
-
-            {/* フォントサイズ設定セクション（ページ下部） */}
-            <div className="setting-section">
-                <label htmlFor="font-size">文字の大きさ：</label>
-                <input
-                    type="range"
-                    id="font-size"
-                    min={12}
-                    max={36}
-                    value={fontSize}
-                    onChange={(e) => setFontSize(Number(e.target.value))}
-                    style={{ fontSize: "16px" }}
-                />
-                <span style={{ marginLeft: "10px" }}>{fontSize}px</span>
-            </div>
-
-            {/* プレビューセクション */}
-            <div className="preview" style={{ fontSize: `${fontSize}px`, marginTop: "20px" }}>
-
             </div>
         </div>
     );
