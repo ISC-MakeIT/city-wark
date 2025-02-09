@@ -3,12 +3,13 @@
     margin: auto;
     padding: 20px;
     text-align: center;
+    font-size: inherit; /* 親要素からフォントサイズを継承する */
 }
 
 .targetTask {
     margin-bottom: 5px;
-    padding: 4px 8px; /* サイズを小さく */
-    font-size: 14px; /* フォントサイズを小さく */
+    padding: 4px 8px;
+    font-size: inherit; /* フォントサイズを親要素から継承 */
 }
 
 .task-container {
@@ -29,14 +30,14 @@
 .todo input {
     width: 50%;
     padding: 8px;
-    font-size: 16px;
+    font-size: inherit; /* フォントサイズを親要素から継承 */
 }
 
 .todo button {
     padding: 8px 12px;
-    font-size: 16px;
+    font-size: inherit; /* フォントサイズを親要素から継承 */
     cursor: pointer;
-    background-color: #6aa241; /* ボタン色を変更 */
+    background-color: #6aa241;
     color: white;
     border: none;
     border-radius: 5px;
@@ -63,16 +64,30 @@ th, td {
     border: 1px solid #ddd;
     text-align: center;
     transition: background-color 0.3s ease;
+    font-size: inherit; /* フォントサイズを親要素から継承 */
+}
+
+.todo td:first-child {
+    width: 70%;
+}
+
+.todo td:nth-child(2) {
+    width: 15%;
+}
+
+.todo td:nth-child(3) {
+    width: 15%;
 }
 
 button {
-    background-color: #6aa241; /* ボタン色を変更 */
+    background-color: #6aa241;
     color: white;
     border: none;
     padding: 8px 12px;
     cursor: pointer;
     border-radius: 5px;
     transition: background-color 0.3s ease;
+    font-size: inherit; /* フォントサイズを親要素から継承 */
 }
 
 button:hover {
@@ -84,17 +99,16 @@ button:disabled {
     cursor: not-allowed;
 }
 
-/* 特定のボタンの背景色 */
 button.add {
-    background-color: #6aa241; /* タスク追加ボタン */
+    background-color: #6aa241;
 }
 
 button.inProgress {
-    background-color: #6aa241; /* 挑戦中ボタン */
+    background-color: #6aa241;
 }
 
 button.completed {
-    background-color: #6aa241; /* タスク完了ボタン */
+    background-color: #6aa241;
 }
 
 table td:hover, table th:hover {
@@ -103,15 +117,29 @@ table td:hover, table th:hover {
 
 .task-stats {
     margin-top: 20px;
-    font-size: 18px;
+    font-size: inherit; /* フォントサイズを親要素から継承 */
 }
 
 div.todayTargetTask {
-    font-size: 30px; /* タイトルのフォントサイズを大きく */
+    font-size: inherit; /* フォントサイズを親要素から継承 */
     font-weight: bold;
 }
 
 p.todayRandomTask {
-    font-size: 20px; /* 目標タスクのフォントサイズを大きく */
+    font-size: inherit; /* フォントサイズを親要素から継承 */
     font-weight: bold;
+}
+
+button.delete {
+    background-color: #f7a4a4;
+    color: white;
+}
+
+button.delete:hover {
+    background-color: #e87c7c;
+}
+
+button.delete:disabled {
+    background-color: #f1c1c1;
+    cursor: not-allowed;
 }

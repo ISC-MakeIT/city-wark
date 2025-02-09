@@ -3,7 +3,7 @@ import { useFontSize } from "../context/FontSizeContext"; // フォントサイ�
 import "./Home.css"; // CSSのインポート
 
 const Home: React.FC = () => {
-    const { fontSize } = useFontSize();
+    const { fontSize, setFontSize } = useFontSize(); // フォントサイズを取得
     const [tasks, setTasks] = useState<{ id: number, text: string, completed: boolean, fromTargetTask: boolean }[]>([]);
     const [newTask, setNewTask] = useState<string>('');
     const [showCompleted, setShowCompleted] = useState<boolean>(false);
@@ -61,7 +61,7 @@ const Home: React.FC = () => {
     const point = tasks.filter(task => task.completed).length;
 
     return (
-        <div className="home">
+        <div className="home" style={{ fontSize: `${fontSize}px` }}>
             <div className="targetTask">
                 <div className={"todayTargetTask"}>今日の目標タスク</div>
                 <div className="task-container">
@@ -73,7 +73,6 @@ const Home: React.FC = () => {
                     >
                         {isTargetTaskCompleted ? "タスク完了" : isTargetTaskAdded ? "挑戦中" : "タスク追加"}
                     </button>
-
                 </div>
             </div>
 
@@ -84,7 +83,6 @@ const Home: React.FC = () => {
                         value={newTask}
                         onChange={(e) => setNewTask(e.target.value)}
                         placeholder={randomNewMakeTask}
-                        style={{ fontSize }}
                     />
                     <button onClick={handleAddTask}>追加</button>
                 </div>
@@ -94,25 +92,33 @@ const Home: React.FC = () => {
                     <tr>
                         <th>挑戦中タスク</th>
                         <th>完了</th>
+                        <th>削除</th>
                     </tr>
                     </thead>
                     <tbody>
                     {tasks.filter(task => !task.completed).map(task => (
                         <tr key={task.id}>
-                            <td style={{ fontSize }}>
+                            <td>
                                 {task.fromTargetTask && "★"} {task.text}
                             </td>
                             <td>
-                                <button onClick={() => toggleTaskCompletion(task.id)} style={{ fontSize }}>
+                                <button onClick={() => toggleTaskCompletion(task.id)}>
                                     完了
                                 </button>
+                            </td>
+                            <td>
+                                {!task.fromTargetTask && (
+                                    <button onClick={() => deleteTask(task.id)} className="delete">
+                                        削除
+                                    </button>
+                                )}
                             </td>
                         </tr>
                     ))}
                     </tbody>
                 </table>
 
-                <button onClick={() => setShowCompleted(!showCompleted)} style={{ fontSize, marginTop: "10px" }}>
+                <button onClick={() => setShowCompleted(!showCompleted)} style={{ marginTop: "10px" }}>
                     {showCompleted ? "完了タスク" : "完了タスクを表示"}
                 </button>
 
@@ -120,20 +126,20 @@ const Home: React.FC = () => {
                     <table>
                         <thead>
                         <tr>
-                            <th style={{ fontSize }}>完了したタスク</th>
-                            <th style={{ fontSize }}>消去</th>
+                            <th>完了したタスク</th>
+                            <th>削除</th>
                         </tr>
                         </thead>
                         <tbody>
                         {tasks.filter(task => task.completed).map(task => (
                             <tr key={task.id}>
-                                <td style={{ fontSize }}>
+                                <td>
                                     {task.fromTargetTask && "★"} {task.text}
                                 </td>
                                 <td>
                                     {!task.fromTargetTask && (
-                                        <button onClick={() => deleteTask(task.id)} style={{ fontSize }}>
-                                            消去
+                                        <button onClick={() => deleteTask(task.id)} className="delete">
+                                            削除
                                         </button>
                                     )}
                                 </td>
@@ -147,6 +153,26 @@ const Home: React.FC = () => {
             <div className="task-stats">
                 <h2>{point}</h2>
                 <p>{targetTaskCompletedCount}</p>
+            </div>
+
+            {/* フォントサイズ設定セクション（ページ下部） */}
+            <div className="setting-section">
+                <label htmlFor="font-size">文字の大きさ：</label>
+                <input
+                    type="range"
+                    id="font-size"
+                    min={12}
+                    max={36}
+                    value={fontSize}
+                    onChange={(e) => setFontSize(Number(e.target.value))}
+                    style={{ fontSize: "16px" }}
+                />
+                <span style={{ marginLeft: "10px" }}>{fontSize}px</span>
+            </div>
+
+            {/* プレビューセクション */}
+            <div className="preview" style={{ fontSize: `${fontSize}px`, marginTop: "20px" }}>
+
             </div>
         </div>
     );
