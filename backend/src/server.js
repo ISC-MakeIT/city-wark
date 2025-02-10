@@ -1,7 +1,15 @@
 const express = require("express");
+const cors = require("cors");
 
 const app = express();
-const port = 3000;
+const port = 3001; // バックエンドのポートは3001
+
+// CORS設定
+app.use(cors({
+    origin: 'http://localhost:3000', // フロントエンドのURL
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+}));
 
 app.use(express.json()); // JSON ボディのパース
 
