@@ -1,16 +1,19 @@
-const express = require('express');
-const app = express();
-const port = 5000;
+const express =require("express")  ;
 
-// ミドルウェアの設定（例: JSONをパース）
+const app = express();
+const port = 3000;
+
+// JSONボディのパースを有効にする
 app.use(express.json());
 
 // 基本的なルート
-app.get('/', (req, res) => {
-    res.send('Hello from the backend!');
+app.get('/', (req , res ) => {
+    console.log(req.query);  // reqを使ってクエリパラメータを取得
+    res.send('Hello, World!');
 });
 
-// 他のAPIエンドポイントもここに定義する
-app.listen(port, () => {
-    console.log(`Server running on http://localhost:${port}`);
+
+// サーバーの起動
+app.listen(port,'0.0.0.0', () => {
+    console.log(`Server is running on http://localhost:${port}`);
 });
