@@ -1,59 +1,48 @@
-const User = require('../models/userModel');  // ユーザーモデルをインポート
+const User = require('../models/userModel');
 
-// ユーザー一覧を取得する
+// ユーザー一覧を取得
 exports.getUsers = async (req, res) => {
     try {
-        const users = await User.find();  // ユーザーを全て取得
-        res.json(users);  // ユーザー一覧を返す
+        const users = await User.getAllUsers();
+        res.json(users);
     } catch (error) {
-        res.status(500).json({ message: 'Server error' });  // エラーハンドリング
+        res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
 
-// 新しいユーザーを作成する
+// 新しいユーザーを作成
 exports.createUser = async (req, res) => {
-    const { name, email, password } = req.body;  // リクエストボディからユーザー情報を取得
+    const { name, email, password } = req.body;
 
     try {
-        const newUser = new User({ name, email, password });  // 新しいユーザーを作成
-        await newUser.save();  // ユーザーをデータベースに保存
-        res.status(201).json(newUser);  // 作成されたユーザーをレスポンスとして返す
+        const newUser = await User.createUser(name, email, password);
+        res.status(201).json(newUser);
     } catch (error) {
-        res.status(500).json({ message: 'Server error' });  // エラーハンドリング
+        res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
 
-// ユーザー情報を更新する
+// ユーザー情報を更新
 exports.updateUser = async (req, res) => {
-    const { id } = req.params;  // リクエストパラメータからユーザーIDを取得
-    const { name, email, password } = req.body;  // リクエストボディから更新するユーザー情報を取得
+    const { id } = req.params;
+    const { name, email, password } = req.body;
 
     try {
-        const updatedUser = await User.findByIdAndUpdate(
-            id,
-            { name, email, password },
-            { new: true }  // 更新後のユーザーを返す
-        );
-        if (!updatedUser) {
-            return res.status(404).json({ message: 'User not found' });  // ユーザーが見つからなかった場合
-        }
-        res.json(updatedUser);  // 更新されたユーザーを返す
+        const updatedUser = await User.updateUser(id, name, email, password);
+        res.json(updatedUser);
     } catch (error) {
-        res.status(500).json({ message: 'Server error' });  // エラーハンドリング
+        res.status(error.message === 'User not found' ? 404 : 500).json({ message: error.message });
     }
 };
 
-// ユーザーを削除する
+// ユーザーを削除
 exports.deleteUser = async (req, res) => {
-    const { id } = req.params;  // リクエストパラメータからユーザーIDを取得
+    const { id } = req.params;
 
     try {
-        const deletedUser = await User.findByIdAndDelete(id);  // ユーザーを削除
-        if (!deletedUser) {
-            return res.status(404).json({ message: 'User not found' });  // ユーザーが見つからなかった場合
-        }
-        res.json({ message: 'User deleted' });  // 削除成功メッセージを返す
+        const result = await User.deleteUser(id);
+        res.json(result);
     } catch (error) {
-        res.status(500).json({ message: 'Server error' });  // エラーハンドリング
+        res.status(error.message === 'User not found' ? 404 : 500).json({ message: error.message });
     }
 };
