@@ -34,7 +34,7 @@ services:
     image: mysql:8.0
     container_name: hackathon-db
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: hackathon
       MYSQL_USER: hackathon_user
       MYSQL_PASSWORD: hackathon_pass
@@ -42,6 +42,18 @@ services:
       - "3306:3306"
     volumes:
       - db_data:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    environment:
+      - PMA_HOST=db         # MySQLホスト名
+      - PMA_USER=hackathon_user  # MySQLのユーザー名
+      - PMA_PASSWORD=hackathon_pass  # MySQLのパスワード
+    ports:
+      - "8080:80"  # phpMyAdminが動作するポート
+    depends_on:
+      - db  # DBコンテナが起動するのを待つ
 
 volumes:
   db_data:
