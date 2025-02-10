@@ -1,16 +1,20 @@
-const express = require('express');
+const express = require("express");
+
 const app = express();
-const port = 5000;
+const port = 3000;
 
-// ミドルウェアの設定（例: JSONをパース）
-app.use(express.json());
+app.use(express.json()); // JSON ボディのパース
 
-// 基本的なルート
+// ユーザー関連のルートを登録
+const userRoutes = require('./routes/userRoutes');
+app.use('/api', userRoutes);
+
+// 基本のルート
 app.get('/', (req, res) => {
-    res.send('Hello from the backend!');
+    res.send('Hello, World!');
 });
 
-// 他のAPIエンドポイントもここに定義する
-app.listen(port, () => {
-    console.log(`Server running on http://localhost:${port}`);
+// サーバーの起動
+app.listen(port, '0.0.0.0', () => {
+    console.log(`Server is running on http://localhost:${port}`);
 });
