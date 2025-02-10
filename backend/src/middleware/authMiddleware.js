@@ -1,27 +1,18 @@
-const jwt = require('jsonwebtoken');  // JWTを使うためにインポート
-const config = require('../config');  // シークレットキーなどの設定ファイルをインポート
+const jwt = require("jsonwebtoken");
+const config = require("../config");
 
-// 認証ミドルウェア
 const authenticate = (req, res, next) => {
-    // リクエストヘッダからトークンを取得
-    const token = req.header('Authorization')?.replace('Bearer ', ''); // 'Bearer ' プレフィックスを取り除く
+    const token = req.header("Authorization")?.replace("Bearer ", "");
 
-    // トークンが提供されていない場合
     if (!token) {
-        return res.status(401).json({ message: 'No token provided' });
+        return res.status(401).json({ message: "No token provided" });
     }
 
     try {
-        // トークンの検証
-        const decoded = jwt.verify(token, config.JWT_SECRET);  // JWT_SECRETはconfigファイルで定義したシークレットキー
-
-        // トークンが有効であれば、リクエストにユーザー情報を追加
-        req.user = decoded;  // トークン内のデータをリクエストオブジェクトに追加
-
-        next();  // 次のミドルウェアへ進む
+        req.user = jwt.verify(token, config.JWT_SECRET); // 🔹 直接代入
+        next();
     } catch (error) {
-        // トークンが無効な場合
-        res.status(403).json({ message: 'Forbidden' });
+        res.status(403).json({ message: "Forbidden" });
     }
 };
 
