@@ -15,8 +15,6 @@
   font-size: 1.5em;
   margin: 0;
   padding:  10px 10px;
-  background-color: #f4f4f4;
-  border-bottom: 1px solid #ddd;
   width: 100%;
 }
 
@@ -24,7 +22,6 @@
 .app-header {
   justify-content: center;
   height: 100px;
-  background-color: #007BFF;
   color: white;
   padding: 0 10px;
   text-align: center;

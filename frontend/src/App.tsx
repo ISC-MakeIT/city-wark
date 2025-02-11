@@ -9,6 +9,7 @@ import Setting from "./pages/Setting";
 import { Header } from "./components/Header";
 import Footer from "./components/Footer";
 import ProfileSetting from "./components/ProfileSetting";
+import Weather from "./components/Weather";
 
 // 📌 ここでコンテキストを正しくインポート！
 import { FontSizeProvider } from "./context/FontSizeContext";
@@ -22,7 +23,7 @@ const App: React.FC = () => {
           <div>
             {/* ヘッダー */}
             <Header />
-
+            <Weather />
             {/* メインコンテンツ */}
             <main className="app-main">
               <Routes>

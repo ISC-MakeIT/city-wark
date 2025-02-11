@@ -6,10 +6,6 @@ import "../App.css";
 const Header: React.FC = () => {
     return (
         <div>
-            <header className="app-header">
-                <h1>日常生活アプリ</h1>
-            </header>
-
             <nav className='app-date'>
                 <p>今日の日付: {new Date().toLocaleDateString('ja-JP')}</p>
             </nav>
