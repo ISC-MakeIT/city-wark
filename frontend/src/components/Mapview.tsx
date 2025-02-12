@@ -12,8 +12,7 @@ export const MapView: React.FC = () => {
     currentCheckpoint: 1, // 北海道からスタート
     points: 0,
   });
-
-    const movePlayer = (steps: number) => {
+  const movePlayer = (steps: number) => {
     setPlayer((prev) => {
       const newPrefectureId = prev.currentCheckpoint + steps;
       const nextPrefecture =
@@ -41,17 +40,17 @@ export const MapView: React.FC = () => {
   };
 
   return (
-    <div>
-      <h1>日本地図ゲーム</h1>
-      <p>
-        現在地: {Prefectures.find((p: Checkpoint) => p.id === player.currentCheckpoint)?.name}
-      </p>
-      <JapanMap
-        currentPrefectureId={player.currentCheckpoint}
-        onClickPrefecture={(name) => alert(`選択された都道府県: ${Prefectures.find((p: Checkpoint) => p.id === player.currentCheckpoint)?.name}`)}
-      />
-    </div>
-    
+      <div>
+        <h1>日本地図ゲーム</h1>
+        <p>
+          現在地: {Prefectures.find((p: Checkpoint) => p.id === player.currentCheckpoint)?.name}
+        </p>
+        <JapanMap
+            currentPrefectureId={player.currentCheckpoint}
+            onClickPrefecture={(name) => alert(`選択された都道府県: ${Prefectures.find((p: Checkpoint) => p.id === player.currentCheckpoint)?.name}`)}
+        />
+      </div>
+
   );
 };
 

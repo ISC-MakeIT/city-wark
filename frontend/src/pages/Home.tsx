@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useFontSize } from "../context/FontSizeContext";
 import "./Home.css";
+import Weather from "../components/Weather";
 
 const Home: React.FC = () => {
     const { fontSize, setFontSize } = useFontSize();
@@ -67,7 +68,7 @@ const Home: React.FC = () => {
             <div className="settings-button" onClick={() => setShowSettings(!showSettings)}>
                 &#9776;
             </div>
-
+            <Weather />
             {/* 設定画面の枠 */}
             {showSettings && (
                 <div className="settings-frame">
@@ -92,7 +93,6 @@ const Home: React.FC = () => {
                     </div>
                 </div>
             )}
-
             <div className="targetTask">
                 <div className={"todayTargetTask"}>今日の目標タスク</div>
                 <div className="task-container">
