@@ -8,7 +8,10 @@
   min-height: 100vh;
   width: 100%;
   height: 100%;
+  transition: background 1s ease-in-out;
 }
+
+
 /*日付表示*/
 .app-date {
   text-align: center;

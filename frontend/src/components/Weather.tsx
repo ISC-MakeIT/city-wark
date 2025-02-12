@@ -43,7 +43,7 @@ const Weather: React.FC = () => {
       case "Clouds": // 曇り
         return "linear-gradient(180deg, #CED1D3 25.67%, #FFF 100%);";
       case "Rain": // 雨
-        return "background: linear-gradient(180deg, #CED1D3 17.4%, #0F5779 72.4%);";
+        return "linear-gradient(180deg, #CED1D3 17.4%, #0F5779 72.4%);";
       case "Snow": // 雪
         return "linear-gradient(180deg, #E0F7FA 0%, #B3E5FC 50%, #FFF 100%)";
       case "Thunderstorm": // 雷

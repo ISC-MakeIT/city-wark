@@ -20,10 +20,9 @@ const App: React.FC = () => {
   return (
       <FontSizeProvider> {/* ここで正しくラップする */}
         <Router>
-          <div>
+          <div >
             {/* ヘッダー */}
             <Header />
-            <Weather />
             {/* メインコンテンツ */}
             <main className="app-main">
               <Routes>
