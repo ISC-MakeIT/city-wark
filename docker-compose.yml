@@ -18,10 +18,10 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     ports:
-      - "3001:3000"  # Express サーバーのポート
+      - "3001:3001"  # Express サーバーのポート
     volumes:
       - ./backend:/app
-    command: npm run dev
+    command: npm run start  # 修正
     environment:
       - DB_HOST=db
       - DB_USER=hackathon_user
@@ -39,7 +39,7 @@ services:
       MYSQL_USER: hackathon_user
       MYSQL_PASSWORD: hackathon_pass
     ports:
-      - "3306:3306"
+      - "3306:3306"  # MySQLのポート設定
     volumes:
       - db_data:/var/lib/mysql
 

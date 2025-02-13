@@ -1,5 +1,6 @@
-const mysql = require("mysql");
-require("dotenv").config(); // .env ファイルから環境変数を読み込む
+require("dotenv").config(); // .envファイルから環境変数を読み込む
+
+const mysql = require("mysql2");
 
 const pool = mysql.createPool({
     connectionLimit: 10, // 最大接続数
@@ -34,4 +35,17 @@ const query = (sql, params) => {
     });
 };
 
-module.exports = { pool, query };
+// promise関数をデータベース接続のラッパーとして使う
+const promise = () => {
+    return new Promise((resolve, reject) => {
+        pool.getConnection((err, connection) => {
+            if (err) {
+                reject("Error connecting to the database");
+            } else {
+                resolve(connection);
+            }
+        });
+    });
+};
+
+module.exports = { pool, query, promise };

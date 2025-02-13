@@ -2,83 +2,73 @@ import React, { useState } from "react";
 import axios from "axios";
 
 const ProfileSetting: React.FC = () => {
-    const [name, setName] = useState("");
-    const [age, setAge] = useState(0);
-    const [sex, setSex] = useState("");
+    const [name, setName] = useState<string>("");
+    const [age, setAge] = useState<number>(0);
+    const [sex, setSex] = useState<string>("");
+    const [error, setError] = useState<string>(""); // エラーメッセージを管理
 
-    // 戻るボタンの処理
-    const settingback = () => {
-        if (window.confirm("変更内容が保存されていません。移動しますか？")) {
-            window.location.href = "/setting";
+    // 保存ボタンがクリックされたときの処理
+    const handleSave = async () => {
+        if (!name || age <= 0 || !sex) {
+            setError("すべてのフィールドを正しく入力してください");
+            return; // 不正な入力の場合は保存処理を行わない
         }
-    };
 
-    // リセットボタンの処理
-    const reset = () => {
-        if (window.confirm("変更内容を破棄しますか？")) {
-            window.location.href = "/profile-setting";
-        }
-    };
-
-    // 保存ボタンの処理
-    const handleSubmit = async () => {
-        if (window.confirm("保存が完了しました。")) {
-            try {
-                const response = await axios.post("http://localhost:3001/api/profile", {
-                    name,
-                    age,
-                    sex,
-                });
-                console.log("Profile saved successfully:", response.data);
-                window.location.href = "/setting"; // 保存後にリダイレクト
-            } catch (error) {
-                console.error("Error saving profile:", error);
+        try {
+            const response = await axios.post("http://localhost:3001/api/users", {
+                name,
+                age,
+                sex
+            });
+            if (response.status === 201) {
+                alert("プロフィールが保存されました");
+                // フォームをリセット
+                setName("");
+                setAge(0);
+                setSex("");
+                setError(""); // エラーメッセージのクリア
+            } else {
+                console.error("エラーレスポンス:", response);
+                alert("保存に失敗しました");
             }
+        } catch (error) {
+            console.error("プロフィール保存エラー:", error);
+            // @ts-ignore
+            setError("保存に失敗しました。詳細: " + (error.response?.data?.message || error.message));
         }
     };
 
     return (
         <div>
             <h1>プロフィール設定</h1>
-            <p>
-                名前:{" "}
+            {error && <p style={{ color: "red" }}>{error}</p>} {/* エラーメッセージの表示 */}
+            <p>名前:
                 <input
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
+                    placeholder="名前を入力"
                 />
             </p>
-            <p>
-                年齢:{" "}
+            <p>年齢:
                 <input
                     type="number"
                     value={age}
                     onChange={(e) => setAge(Number(e.target.value))}
+                    min={1}
+                    placeholder="年齢を入力"
                 />
             </p>
-            <p>
-                性別:{" "}
-                <input
-                    type="text"
-                    id="sex"
-                    list="sexlist"
-                    value={sex}
-                    onChange={(e) => setSex(e.target.value)}
-                />
-                <datalist id="sexlist">
-                    <option value="男性" />
-                    <option value="女性" />
-                    <option value="その他" />
-                </datalist>
+            <p>性別:
+                <select value={sex} onChange={(e) => setSex(e.target.value)}>
+                    <option value="">選択してください</option>
+                    <option value="男性">男性</option>
+                    <option value="女性">女性</option>
+                    <option value="その他">それ以外</option>
+                </select>
             </p>
             <div>
-                <p>
-                    <a href="/setting" onClick={settingback}>
-                        戻る
-                    </a>
-                </p>
-                <input type="reset" value={"リセット"} onClick={reset} />
-                <input type="button" value={"保存"} onClick={handleSubmit} />
+                <button onClick={handleSave} disabled={!name || age <= 0 || !sex}>保存</button>
             </div>
         </div>
     );

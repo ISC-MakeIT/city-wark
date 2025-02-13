@@ -1,100 +1,101 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useFontSize } from "../context/FontSizeContext"; // コンテキストをインポート
+import axios from "axios"; // axiosを使ってバックエンドにリクエストを送信
 import "./Todo.css"; // スタイルを外部ファイルに分離
 
+interface Task {
+  id: number;
+  comment: string;
+  scheduled_date: string | null;
+  completed: boolean;
+}
+
 const Todo: React.FC = () => {
-  // FontSizeContextからfontSizeを取得
   const { fontSize } = useFontSize();
 
-  // 初期状態
-  const [todos, setTodos] = useState([
-    { comment: "今日は洗濯物をやろう", completed: false },
-    { comment: "床を今日は拭こう", completed: false },
-    { comment: "データがなくならないようにしよう", completed: false },
-  ]);
-
+  const [todos, setTodos] = useState<Task[]>([]);
   const [newTodo, setNewTodo] = useState("");
+  const [scheduledDate, setScheduledDate] = useState(""); // 後日の予定日
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
-  // TODOを追加する関数
-  const addTodo = () => {
+  // 新しいタスクをバックエンドに送信して追加する関数
+  const addTodo = async () => {
     if (newTodo.trim()) {
-      setTodos([...todos, { comment: newTodo, completed: false }]);
-      setNewTodo("");
+      try {
+        await axios.post("http://localhost:3001/todo/add", {
+          comment: newTodo,
+          scheduledDate: scheduledDate,
+        });
+        await fetchTodos(); // タスクが追加されたら再取得
+        setNewTodo("");
+        setScheduledDate(""); // フォームのリセット
+      } catch (error) {
+        console.error("タスクの追加に失敗しました:", error);
+        setErrorMessage("タスクの追加に失敗しました。もう一度試してください。");
+      }
     }
   };
 
-  // 状態を切り替える関数（完了にする）
-  const toggleState = (index: number) => {
-    const updatedTodos = todos.map((todo, i) =>
-        i === index ? { ...todo, completed: !todo.completed } : todo
-    );
-    setTodos(updatedTodos);
+  // タスクをバックエンドから取得する関数
+  const fetchTodos = async () => {
+    try {
+      const response = await axios.get("http://localhost:3001/todo/get");
+      setTodos(response.data);
+    } catch (error) {
+      console.error("タスクの取得に失敗しました:", error);
+      setErrorMessage("タスクの取得に失敗しました。");
+    }
   };
 
-  // 未完了リストと完了リストに分ける
-  const incompleteTodos = todos.filter((todo) => !todo.completed);
-  const completedTodos = todos.filter((todo) => todo.completed);
+  // 初期化時にタスクを取得
+  useEffect(() => {
+    const fetchData = async () => {
+      await fetchTodos();  // async function内でawaitを使用
+    };
+    fetchData().then(() => {
+      // fetchDataが完了した後に実行する処理（例：ログ）
+      console.log("タスクが取得されました");
+    }).catch((error) => {
+      console.error("タスクの取得中にエラーが発生しました:", error);
+    });
+  }, []);
 
   return (
       <div className="todo" style={{ fontSize: `${fontSize}px` }}>
         <h1>TODOリスト</h1>
 
-        {/* 未完了リスト */}
-        <h2>未完了のTODO</h2>
-        <table>
-          <thead>
-          <tr>
-            <th className="id">ID</th>
-            <th className="comment">コメント</th>
-            <th className="state">状態</th>
-            <th className="button">操作</th>
-          </tr>
-          </thead>
-          <tbody>
-          {incompleteTodos.map((todo, index) => (
-              <tr key={index}>
-                <td>{index + 1}</td>
-                <td>{todo.comment}</td>
-                <td>{todo.completed ? "終了" : "見終了"}</td>
-                <td>
-                  <button onClick={() => toggleState(index)}>
-                    完了にする
-                  </button>
-                </td>
-              </tr>
-          ))}
-          </tbody>
-        </table>
+        {errorMessage && <div className="error-message">{errorMessage}</div>}
 
-        {/* 完了リスト */}
-        <h2>完了したTODO</h2>
-        <table>
-          <thead>
-          <tr>
-            <th className="id">ID</th>
-            <th className="comment">コメント</th>
-            <th className="state">状態</th>
-          </tr>
-          </thead>
-          <tbody>
-          {completedTodos.map((todo, index) => (
-              <tr key={index}>
-                <td>{index + 1}</td>
-                <td>{todo.comment}</td>
-                <td>{todo.completed ? "完了" : "未完了"}</td>
-              </tr>
-          ))}
-          </tbody>
-        </table>
-
+        {/* 新しいTODOを追加 */}
         <div className="add-todo">
           <input
               value={newTodo}
               onChange={(e) => setNewTodo(e.target.value)}
               placeholder="新しいTODOを入力"
           />
-          <button onClick={addTodo}>追加</button>
+          <input
+              type="date"
+              value={scheduledDate}
+              onChange={(e) => setScheduledDate(e.target.value)}
+              placeholder="後日の日付"
+          />
+          <button
+              onClick={addTodo}
+              disabled={!newTodo.trim() || !scheduledDate}
+          >
+            追加
+          </button>
         </div>
+
+        {/* タスク表示 */}
+        <h2>タスク一覧</h2>
+        {todos.map((todo) => (
+            <div key={todo.id}>
+              <p>
+                {todo.comment} - {todo.scheduled_date ? `予定日: ${todo.scheduled_date}` : "未設定"}
+              </p>
+            </div>
+        ))}
       </div>
   );
 };
