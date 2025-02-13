@@ -5,17 +5,13 @@ import Weather from "../components/Weather";
 
 const Home: React.FC = () => {
     const { fontSize, setFontSize } = useFontSize();
-    const [tasks, setTasks] = useState<{ id: number, text: string, completed: boolean, fromTargetTask: boolean }[]>([]);
-    const [newTask, setNewTask] = useState<string>('');
+    const [tasks, setTasks] = useState<{ id: number, text: string, completed: boolean }[]>([]);
+    const [randomTask, setRandomTask] = useState<string>("");
     const [showCompleted, setShowCompleted] = useState<boolean>(false);
-    const [randomTask, setRandomTask] = useState<string>('');
-    const [isTargetTaskAdded, setIsTargetTaskAdded] = useState<boolean>(false);
-    const [isTargetTaskCompleted, setIsTargetTaskCompleted] = useState<boolean>(false);
-    const [showSettings, setShowSettings] = useState<boolean>(false); // 設定画面の表示状態
+    const [showSettings, setShowSettings] = useState<boolean>(false);
+    const [points, setPoints] = useState<number>(0);
 
-    const targetTaskCompletedCount = tasks.filter(task => task.completed && task.fromTargetTask).length;
-
-    const targetTask = [
+    const predefinedTasks = [
         "皿洗いをしよう", "散歩しよう", "トイレ掃除", "部屋の片付け", "買い物", "ゴミ出し",
         "コーヒーで一息", "水を飲む", "洗濯物を干す", "洗濯物をたたむ", "お花に水を上げる", "ドラマを見る",
         "電話をする", "歯磨き", "お風呂掃除", "クローゼットの整理", "日光を浴びる", "洗面台の掃除",
@@ -23,53 +19,50 @@ const Home: React.FC = () => {
     ];
 
     useEffect(() => {
-        setRandomTask(targetTask[Math.floor(Math.random() * targetTask.length)]);
+        setRandomTask(predefinedTasks[Math.floor(Math.random() * predefinedTasks.length)]);
+        const lastCompletedDate = localStorage.getItem("lastCompletedDate");
+        const savedPoints = localStorage.getItem("points");
+        const today = new Date().toDateString();
+
+        if (savedPoints) {
+            setPoints(Number(savedPoints));
+        }
+
+        if (lastCompletedDate !== today) {
+            localStorage.setItem("lastCompletedDate", "");
+        }
     }, []);
 
-    const addTask = (taskText: string, fromTargetTask: boolean = false) => {
-        if (taskText.trim()) {
-            setTasks([...tasks, { id: Date.now(), text: taskText, completed: false, fromTargetTask }]);
+    const addTask = () => {
+        if (randomTask.trim()) {
+            setTasks([...tasks, { id: Date.now(), text: randomTask, completed: false }]);
+            setRandomTask(predefinedTasks[Math.floor(Math.random() * predefinedTasks.length)]);
         }
     };
 
-    const randomNewMakeTask = targetTask[Math.floor(Math.random() * targetTask.length)];
-
-    const handleAddTask = () => {
-        addTask(newTask);
-        setNewTask('');
-    };
-
     const toggleTaskCompletion = (id: number) => {
-        setTasks(tasks.map(task => {
-            if (task.id === id) {
-                if (task.fromTargetTask) {
-                    setIsTargetTaskCompleted(true);
-                }
-                return { ...task, completed: !task.completed };
-            }
-            return task;
-        }));
+        setTasks(tasks.map(task => task.id === id ? { ...task, completed: !task.completed } : task));
+        const today = new Date().toDateString();
+        const lastCompletedDate = localStorage.getItem("lastCompletedDate");
+
+        if (lastCompletedDate !== today) {
+            const newPoints = points + 1;
+            setPoints(newPoints);
+            localStorage.setItem("points", newPoints.toString());
+            localStorage.setItem("lastCompletedDate", today);
+        }
     };
 
     const deleteTask = (id: number) => {
         setTasks(tasks.filter(task => task.id !== id));
     };
 
-    const handleAddTargetTask = () => {
-        addTask(randomTask, true);
-        setIsTargetTaskAdded(true);
-    };
-
-    const point = tasks.filter(task => task.completed).length;
-
     return (
         <div className="home" style={{ fontSize: `${fontSize}px` }}>
-            {/* 設定ボタン */}
             <div className="settings-button" onClick={() => setShowSettings(!showSettings)}>
                 &#9776;
             </div>
             <Weather />
-            {/* 設定画面の枠 */}
             {showSettings && (
                 <div className="settings-frame">
                     <div className="settings-content">
@@ -78,50 +71,29 @@ const Home: React.FC = () => {
                             <label>文字の大きさ：</label>
                             <input
                                 type="range"
-                                id="font-size"
                                 min={12}
                                 max={36}
                                 value={fontSize}
                                 onChange={(e) => setFontSize(Number(e.target.value))}
-                                style={{ fontSize: "16px" }}
                             />
-                            <span style={{ marginLeft: "10px", fontSize: "16px" }}>{fontSize}px</span>
+                            <span>{fontSize}px</span>
                         </div>
-                        <button onClick={() => setShowSettings(false)} className="close-button">
-                            閉じる
-                        </button>
+                        <button onClick={() => setShowSettings(false)} className="close-button">閉じる</button>
                     </div>
                 </div>
             )}
             <div className="targetTask">
-                <div className={"todayTargetTask"}>今日の目標タスク</div>
+                <div className="todayTargetTask">今日のタスク</div>
                 <div className="task-container">
-                    <p className={"todayRandomTask"}>{randomTask}</p>
-                    <button
-                        onClick={handleAddTargetTask}
-                        className={`targetTask ${isTargetTaskCompleted ? "completed" : isTargetTaskAdded ? "inProgress" : "add"}`}
-                        disabled={isTargetTaskAdded || isTargetTaskCompleted}
-                    >
-                        {isTargetTaskCompleted ? "タスク完了" : isTargetTaskAdded ? "挑戦中" : "タスク追加"}
-                    </button>
+                    <p className="todayRandomTask">{randomTask}</p>
+                    <button onClick={addTask}>タスク追加</button>
                 </div>
             </div>
-
             <div className="todo">
-                <div className="todo-input-container">
-                    <input
-                        type="text"
-                        value={newTask}
-                        onChange={(e) => setNewTask(e.target.value)}
-                        placeholder={randomNewMakeTask}
-                    />
-                    <button onClick={handleAddTask}>追加</button>
-                </div>
-
                 <table>
                     <thead>
                     <tr>
-                        <th>挑戦中タスク</th>
+                        <th>タスク</th>
                         <th>完了</th>
                         <th>削除</th>
                     </tr>
@@ -129,30 +101,20 @@ const Home: React.FC = () => {
                     <tbody>
                     {tasks.filter(task => !task.completed).map(task => (
                         <tr key={task.id}>
+                            <td>{task.text}</td>
                             <td>
-                                {task.fromTargetTask && "★"} {task.text}
+                                <button onClick={() => toggleTaskCompletion(task.id)}>完了</button>
                             </td>
                             <td>
-                                <button onClick={() => toggleTaskCompletion(task.id)}>
-                                    完了
-                                </button>
-                            </td>
-                            <td>
-                                {!task.fromTargetTask && (
-                                    <button onClick={() => deleteTask(task.id)} className="delete">
-                                        削除
-                                    </button>
-                                )}
+                                <button onClick={() => deleteTask(task.id)} className="delete">削除</button>
                             </td>
                         </tr>
                     ))}
                     </tbody>
                 </table>
-
-                <button onClick={() => setShowCompleted(!showCompleted)} style={{ marginTop: "10px" }}>
+                <button onClick={() => setShowCompleted(!showCompleted)}>
                     {showCompleted ? "完了タスク" : "完了タスクを表示"}
                 </button>
-
                 {showCompleted && (
                     <table>
                         <thead>
@@ -164,15 +126,9 @@ const Home: React.FC = () => {
                         <tbody>
                         {tasks.filter(task => task.completed).map(task => (
                             <tr key={task.id}>
+                                <td>{task.text}</td>
                                 <td>
-                                    {task.fromTargetTask && "★"} {task.text}
-                                </td>
-                                <td>
-                                    {!task.fromTargetTask && (
-                                        <button onClick={() => deleteTask(task.id)} className="delete">
-                                            削除
-                                        </button>
-                                    )}
+                                    <button onClick={() => deleteTask(task.id)} className="delete">削除</button>
                                 </td>
                             </tr>
                         ))}
@@ -180,10 +136,8 @@ const Home: React.FC = () => {
                     </table>
                 )}
             </div>
-
-            <div className="task-stats">
-                <h2>{point}</h2>
-                <p>{targetTaskCompletedCount}</p>
+            <div className="points-display">
+                <h2>ポイント: {points}</h2>
             </div>
         </div>
     );
