@@ -7,7 +7,7 @@ const API_KEY = process.env.REACT_APP_WEATHER_API_KEY; // .env から取得
 const CITY_ID = "1848354"; // 神奈川県（横浜）の都市ID
 
 console.log("API_KEY:", API_KEY); // APIキーが適切に取得されているか確認
-
+//この文消すやつ
 const Weather: React.FC = () => {
   const [weather, setWeather] = useState<WeatherData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
