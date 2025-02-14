@@ -23,7 +23,7 @@ const Setting: React.FC = () => {
 
     return (
         <div style={{ padding: "20px" }}>
-            <Profile profile={profile} /> {/* プロフィールを表示 */}
+            <Profile profile={profile} />
             <p><a href="/profile-setting">プロフィール設定はこちらから→</a></p>
             <h1>設定ページ</h1>
             <div className="setting-section">

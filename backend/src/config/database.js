@@ -1,51 +1,41 @@
-require("dotenv").config(); // .envファイルから環境変数を読み込む
+const mysql = require("mysql2/promise");
+require("dotenv").config();
 
-const mysql = require("mysql2");
+const dbConfig = {
+    connectionLimit: 10,
+    host: process.env.DB_HOST || "localhost",
+    user: process.env.DB_USER || "root",
+    password: process.env.DB_PASS || "password",
+    database: process.env.DB_NAME || "hackathon",
+    port: process.env.DB_PORT || 3306
+};
 
-const pool = mysql.createPool({
-    connectionLimit: 10, // 最大接続数
-    host: process.env.DB_HOST || "localhost", // 環境変数を使用してホストを設定
-    user: process.env.DB_USER || "root", // ユーザー名
-    password: process.env.DB_PASS || "password", // パスワード
-    database: process.env.DB_NAME || "hackathon", // データベース名
-    port: process.env.DB_PORT || 3306 // ポート
-});
+const pool = mysql.createPool(dbConfig);
 
-// 接続テスト
-pool.getConnection((err, connection) => {
-    if (err) {
+// ✅ 接続確認用の関数
+const connectDB = async () => {
+    let connection;
+    try {
+        connection = await pool.getConnection();
+        console.log("Connected to the MySQL database");
+        connection.release();
+    } catch (err) {
         console.error("Error connecting to the database:", err.message);
-        return;
+        throw err;
     }
-    console.log("Connected to the MySQL database");
-    connection.release(); // 接続を解放
-});
-
-// クエリ実行用の関数
-const query = (sql, params) => {
-    return new Promise((resolve, reject) => {
-        pool.query(sql, params, (err, results) => {
-            if (err) {
-                console.error("Database query error:", err.message);
-                reject(err);
-            } else {
-                resolve(results);
-            }
-        });
-    });
 };
 
-// promise関数をデータベース接続のラッパーとして使う
-const promise = () => {
-    return new Promise((resolve, reject) => {
-        pool.getConnection((err, connection) => {
-            if (err) {
-                reject("Error connecting to the database");
-            } else {
-                resolve(connection);
-            }
-        });
-    });
+const query = async (sql, params = []) => {
+    try {
+        if (!sql) throw new Error("SQL クエリが提供されていません。");
+        if (!Array.isArray(params)) throw new Error("params は配列である必要があります。");
+
+        const [results] = await pool.execute(sql, params);
+        return results;
+    } catch (err) {
+        console.error("Database query error:", err.message);
+        return { error: err.message };
+    }
 };
 
-module.exports = { pool, query, promise };
+module.exports = { pool, query, connectDB };

@@ -1,32 +1,26 @@
 const express = require('express');
 const cors = require('cors');
-require('dotenv').config();  // .envファイルを読み込む
-const { promise } = require('./config/database'); // データベース接続をインポート
-const userRoutes = require('./routes/userRoutes'); // userRoutesのインポート
+require('dotenv').config();
+const { connectDB } = require('./config/database'); // `connectDB` をインポート
+const userRoutes = require('./routes/userRoutes'); // userRoutes のインポート
 
 const app = express();
 
-// CORSを有効にする
-app.use(cors());
-// JSONボディのパース
-app.use(express.json());
+app.use(cors()); // CORSの設定
+app.use(express.json()); // JSONリクエストボディの処理
 
 const PORT = process.env.PORT || 3001;
 
-// 基本的なルート
 app.get('/', (req, res) => {
     res.send('Hello from the backend!');
 });
 
-// ユーザー関連のルートを使う
-app.use('/api', userRoutes);  // /api以下でユーザーのルートを使用
+// ここで '/api' プレフィックスを付けて userRoutes を設定
+app.use('/api', userRoutes); // すべての /api で始まるリクエストを userRoutes にルーティング
 
-// データベース接続を確認後、サーバーを起動
-promise()
+// ✅ 修正: `connectDB()` を呼び出してからサーバー起動
+connectDB()
     .then(() => {
-        console.log("Connected to DB");
-
-        // サーバーの起動（DB接続後）
         app.listen(PORT, () => {
             console.log(`Server running on http://localhost:${PORT}`);
         });

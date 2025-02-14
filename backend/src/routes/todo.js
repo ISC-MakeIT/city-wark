@@ -22,7 +22,7 @@ router.post('/add', (req, res) => {
     INSERT INTO tasks (comment, completed, scheduled_date)
     VALUES (?, ?, ?)
   `;
-    db.query(query, [comment, false, scheduledDate || null], (err, results) => {
+    db.query(query, [comment, false, scheduledDate || null], (err) => {
         if (err) {
             console.error(err);
             return res.status(500).json({ error: 'タスクの追加に失敗しました' });
